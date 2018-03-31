@@ -1,0 +1,27 @@
+{
+  "name": "articleify",
+  "version": "0.0.1",
+  "description": "Converts web pages, PDF, or text into article that Pocket can consume",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "*",
+    "sqlite": "*",
+    "sequelize": "*",
+    "body-parser": "*"
+  },
+  "engines": {
+    "node": "6.10.x"
+  },
+  "repository": {
+    "url": "https://glitch.com/edit/#!/welcome-project"
+  },
+  "license": "none",
+  "keywords": [
+    "node",
+    "glitch",
+    "express"
+  ]
+}
