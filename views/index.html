@@ -5,11 +5,11 @@
 <html>
   <head>
     <meta name="description" content="A cool thing made with Glitch">
-    <link id="favicon" rel="icon" href="https://cdn.rawgit.com/pkoepke/node_sqlite_button_pusher_1/master/favicon.ico" type="image/x-icon">
     <meta charset="utf-8">
+    <link id="favicon" rel="icon" href="https://cdn.rawgit.com/pkoepke/node_sqlite_button_pusher_1/master/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/style.css">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/style.css">
     <meta http-equiv="Content-Language" content="en">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,16 +22,17 @@
     </header>
 
     <main>
+      <a href="/allArticlesList">All Articles List</a>
+      <hr>
       <div class="buttonsDiv">
-        <form id="testPostForm" action="/postTest" method="post">
-          Post test form<br>
-          <input type="text" name="postTestTextInput" />
-          <input type="submit" value="Submit">
-        </form>
-        <hr>
         <form id="makeArticleFromUrlForm" action="/makeArticleFromUrl" method="post">
           <label>URL: <input type="url" value="" name="url" id="urlInput" /></label>
           <input type="submit" value="Make article from URL" id="makeArticleFromUrlButton" />
+        </form>
+        <hr>
+        <form id="makeArticleFromFileUploadForm" action="/makeArticleFromFileUpload" method="post">
+          <label>File upload: <input type="file" value="" name="file" id="file" /></label>
+          <input type="submit" value="Make article from file" id="makeArticleFromFileUploadButton" />
         </form>
         <hr>
         <form id="makeArticleFromTextForm" action="/makeArticleFromText" method="post">

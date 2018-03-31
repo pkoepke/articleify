@@ -1,4 +1,4 @@
-An app that changes an HTML page, PDF, or text into a simple HTML page that Pocket can consume.
+An app that changes an HTML page, PDF, or text into a simple HTML page that Pocket can consume. Pocket has odd, unknown methods of detecting an "article", so this is particlaly achieved by simplifying the HTML and adding 3 paragraphs of Lorem Ipsum text to the end of the text.
 
 FAQ:
 
