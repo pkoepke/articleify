@@ -30,7 +30,6 @@ app.get('/allArticlesList', function (request, response) {
   let responseText = '<h2>Articleify all articles list</h2>';
   myDatabase.findAll({ }).then(function(articlesArray) {
     for (let articleObject of articlesArray) {
-      console.log(JSON.stringify(articleObject))
       let articleifiedUrl = "https://articleify.glitch.me/getArticle?id=" + articleObject.id
       responseText += ("<p><a href=\"" + articleifiedUrl + "\">" + articleifiedUrl + "</a> " + articleObject.articleTitle + "</p>");
     }
@@ -40,29 +39,27 @@ app.get('/allArticlesList', function (request, response) {
   });
 });
 
-app.post('/postTest', function (request, response) {
-  console.log(request.body)
+app.post('/makeArticleFromUrl', function (request, response) {
+  response.send('Your input was :' + request.body);
   response.send('Your input was :' + JSON.stringify(request.body));
 });
 
-app.post('/makeArticleFromUrl', function (request, response) {
-  console.log(request.body)
+app.post('/makeArticleFromFileUpload', function (request, response) {
   response.send('Your input was :' + JSON.stringify(request.body));
 });
 
 app.post('/makeArticleFromText', function (request, response) {
-  let articleText = JSON.stringify(request.body.articleText);
-  console.log(articleText);
-  articleText = articleText.slice(1, -1); // Stringify adds quotes around the string. Remove them.
+  let articleText = request.body.articleText;
   articleText = removeCarriageReturn(articleText); // Change all \r\n to just \n. For Windows clients.
   articleText = changeLineFeedsToBr(articleText); // Change all \n to <br> for HTML display.
   articleText = addLoremIpsum(articleText); // Add lorem Ipsum to help Pocket see it as an article.
   articleText = "<body><div class='g-story-body' name='article'>" + articleText + "</div></body>" // Now that the body is ready, add body opening and closing tags, and a Div just to help Pocket along. Not sure the Div helps.
   let articleTitle = request.body.articleTitle
-  let savedArticle = saveArticle("","",articleTitle,articleText);
-  let responseBody = addHtmlHeaderTags(articleText, "<title>" + articleTitle + "</title>");
-  responseBody = addHtmlTags(responseBody);
-  response.send(responseBody);
+  saveArticle("","",articleTitle,articleText).then(function(article) {
+    console.log(article);
+    let id = article.id;
+    makeResponse(id).then(madeResponse => response.send(madeResponse));
+  });
 });
 
 // Helper functions for modifying text
@@ -75,16 +72,12 @@ function changeLineFeedsToBr(myString) { // changes \n to <br> so web pages disp
 }
 
 function addLoremIpsum(myString) { // Add Lorem Ipsum to the end of a string. String should be HTML using <br> and <p>, not \n.
-  return myString.concat("<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer auctor nulla in tortor consectetur, ut convallis neque iaculis. Ut bibendum tincidunt magna sed faucibus. Fusce condimentum erat leo, ac eleifend neque euismod cursus. Ut nibh nulla, fermentum non dolor vel, lobortis maximus justo. Mauris eu sapien at magna maximus volutpat eu consequat dui. Aliquam erat enim, maximus sit amet rhoncus et, imperdiet vitae lacus. Aliquam convallis ipsum id augue suscipit, non scelerisque neque congue. Phasellus arcu est, condimentum nec interdum finibus, gravida nec arcu. Nunc quis aliquet felis. Sed sodales lacinia orci, ac condimentum tellus fermentum ac. Vivamus cursus nisl odio, quis elementum nisi imperdiet in. Vestibulum metus magna, ornare a egestas id, dapibus vitae enim. Cras bibendum iaculis felis.</p><p>Nunc a tortor nec dolor posuere varius. Donec iaculis condimentum risus eget porta. Cras posuere efficitur urna, vel porta elit ultrices vel. Donec consectetur, turpis vehicula ultricies finibus, enim enim vulputate tellus, vitae consectetur mauris libero et velit. Morbi imperdiet consectetur neque sed condimentum. Suspendisse eget orci vel nisl lacinia viverra. Nullam erat purus, aliquet elementum libero in, lacinia maximus magna. Nulla ac facilisis lorem. Pellentesque ac augue facilisis, ultricies risus eu, laoreet risus. Nam finibus, turpis at maximus malesuada, tellus neque accumsan augue, eu dictum libero nulla vitae est. Pellentesque elit est, imperdiet eget arcu sit amet, sagittis sollicitudin arcu. Mauris et volutpat ante.</p><p>Sed mattis finibus risus. Aliquam eget sodales arcu. Integer vel odio nec nulla ullamcorper placerat. Nam viverra viverra turpis, ut porta nulla fringilla id. Integer ullamcorper neque dolor, quis consequat tellus scelerisque a. Phasellus a pellentesque erat, quis mollis urna. In sit amet vulputate odio. Nam molestie suscipit mauris, eu efficitur tortor viverra eget. Nunc volutpat tellus at nulla fermentum fringilla. Fusce lacinia luctus mauris et feugiat. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>")
+  return myString + "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer auctor nulla in tortor consectetur, ut convallis neque iaculis. Ut bibendum tincidunt magna sed faucibus. Fusce condimentum erat leo, ac eleifend neque euismod cursus. Ut nibh nulla, fermentum non dolor vel, lobortis maximus justo. Mauris eu sapien at magna maximus volutpat eu consequat dui. Aliquam erat enim, maximus sit amet rhoncus et, imperdiet vitae lacus. Aliquam convallis ipsum id augue suscipit, non scelerisque neque congue. Phasellus arcu est, condimentum nec interdum finibus, gravida nec arcu. Nunc quis aliquet felis. Sed sodales lacinia orci, ac condimentum tellus fermentum ac. Vivamus cursus nisl odio, quis elementum nisi imperdiet in. Vestibulum metus magna, ornare a egestas id, dapibus vitae enim. Cras bibendum iaculis felis.</p><p>Nunc a tortor nec dolor posuere varius. Donec iaculis condimentum risus eget porta. Cras posuere efficitur urna, vel porta elit ultrices vel. Donec consectetur, turpis vehicula ultricies finibus, enim enim vulputate tellus, vitae consectetur mauris libero et velit. Morbi imperdiet consectetur neque sed condimentum. Suspendisse eget orci vel nisl lacinia viverra. Nullam erat purus, aliquet elementum libero in, lacinia maximus magna. Nulla ac facilisis lorem. Pellentesque ac augue facilisis, ultricies risus eu, laoreet risus. Nam finibus, turpis at maximus malesuada, tellus neque accumsan augue, eu dictum libero nulla vitae est. Pellentesque elit est, imperdiet eget arcu sit amet, sagittis sollicitudin arcu. Mauris et volutpat ante.</p><p>Sed mattis finibus risus. Aliquam eget sodales arcu. Integer vel odio nec nulla ullamcorper placerat. Nam viverra viverra turpis, ut porta nulla fringilla id. Integer ullamcorper neque dolor, quis consequat tellus scelerisque a. Phasellus a pellentesque erat, quis mollis urna. In sit amet vulputate odio. Nam molestie suscipit mauris, eu efficitur tortor viverra eget. Nunc volutpat tellus at nulla fermentum fringilla. Fusce lacinia luctus mauris et feugiat. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>";
 }
 
 function removeEscapesFromDuobleQuotes(myString) {
   return myString.replace("\\\"","\"")  
 }
-
-let escapedDoubleQuote = '\\"';
-console.log(escapedDoubleQuote);
-console.log('This is testing removing escapes from double quotes \"');
 
 function addHtmlTags(myString) { // Wraps myString in <html> and </html>
   return "<html>" + myString + "</html>"
@@ -96,26 +89,39 @@ function addHtmlHeaderTags(myString, optionalTags) { // Wraps myString in <head>
 
 // Return an article from the DB. URL must be in format /getArticle?id=<article ID you want>
 
-app.get('/getArticle', function (request, response) {
+app.get('/getArticle', (request, response) => {
   let id = request.query.id;
-  myDatabase.findAll({ where: {id: id }}).then(function(articleArray) {
+  /*myDatabase.findAll({ where: {id: id }}).then(function(articleArray) {
     let article = articleArray[0]
-      console.log(article)
-      let responseText = addHtmlHeaderTags(article.articleText, "<title>" + article.articleTitle + "</title>");
-      responseText = removeEscapesFromDuobleQuotes(responseText);
-      response.send(responseText);
-  })
+    let responseText = addHtmlHeaderTags(article.articleText, "<title>" + article.articleTitle + "</title>");
+    response.send(responseText);
+  })*/
+  makeResponse(id).then(madeResponse => response.send(madeResponse));
 });
+
+// Create response from article ID
+function makeResponse(id) {
+  return new Promise( (resolve, reject) => {
+    myDatabase.findAll({ where: {id: id }}).then( articleArray => {
+      let article = articleArray[0]
+      let responseText = addHtmlHeaderTags(article.articleText, "<title>" + article.articleTitle + "</title>");
+      resolve(responseText);
+    });
+  })
+}
 
 // Save article to SQLite DB
 function saveArticle(articleId, articleUrl, articleTitle, articleText) {
-  myDatabase.create({ articleUrl: articleUrl, articleTitle: articleTitle, articleText: articleText }).then(article => {
-    return article;
+  return new Promise((resolve, reject) => { // Help from https://stackoverflow.com/questions/14220321/how-do-i-return-the-response-from-an-asynchronous-call
+    myDatabase.create({ articleUrl: articleUrl, articleTitle: articleTitle, articleText: articleText }).then(article => {
+      console.log('within myDatabase.create: ' + article);
+      resolve(article);
+    });
   });
 }
 
 // Function to drop all articles with ID > 10
-setInterval( function() { dropArticlesOver10(); }, 12000);
+setInterval( () => { dropArticlesOver10(); }, 120000);
 function dropArticlesOver10() {
   /*myDatabase.destroy({
     where: {
@@ -155,7 +161,7 @@ var sequelize = new Sequelize('database', process.env.DB_USER, process.env.DB_PA
 
 // Open the DB connection and authenticate with the database when the script runs
 sequelize.authenticate()
-  .then(function(err) {
+  .then( (err) => {
     console.log('Connection has been established successfully.');
     // define a new table 'table1'
     myDatabase = sequelize.define('table1', {
@@ -172,14 +178,14 @@ sequelize.authenticate()
     
     // Careful, un-commenting this line will drop the DB table and create a new one! setupDb();
   })
-  .catch(function (err) {
+  .catch( (err) => {
     console.log('Unable to connect to the database: ', err);
   });
 
 // populate table with default values. Just for testing, won't be called in production code because it wipes out the previous DB and starts a new one.
 function setupDb() {
   myDatabase.sync({force: true}) // using 'force' it drops the table users if it already exists, and creates a new one
-    .then(function(){
+    .then( () => {
       myDatabase.create({});
     });  
 }
