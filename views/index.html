@@ -25,20 +25,20 @@
       <a href="/allArticlesList">All Articles List</a>
       <hr>
       <div class="buttonsDiv">
-        <form id="makeArticleFromUrlForm" action="/makeArticleFromUrl" method="post">
+        <form id="makeArticleFromHtmlUrlForm" action="/makeArticleFromHtmlUrl" method="post">
           <label>URL: <input type="url" value="" name="url" id="urlInput" /></label>
-          <input type="submit" value="Make article from URL" id="makeArticleFromUrlButton" />
-        </form>
-        <hr>
-        <form id="makeArticleFromFileUploadForm" action="/makeArticleFromFileUpload" method="post">
-          <label>File upload: <input type="file" value="" name="file" id="file" /></label>
-          <input type="submit" value="Make article from file" id="makeArticleFromFileUploadButton" />
+          <input type="submit" value="Make article from URL" id="makeArticleFromHtmlUrlButton" />
         </form>
         <hr>
         <form id="makeArticleFromTextForm" action="/makeArticleFromText" method="post">
           <label>Article title (optional): <input type="text" value="" name="articleTitle" id="articleTitleInput" /></label>
           <br><label>Article text: <textarea name="articleText" id="articleTextInput"></textarea></label>
           <input type="submit" value="Make article from text" id="makeArticleFromTextButton" />
+        </form>
+        <hr>
+        <form id="makeArticleFromFileUploadForm" action="/makeArticleFromFileUpload" method="post">
+          <label>File upload: <input type="file" value="" name="file" id="file" /></label>
+          <input type="submit" value="Make article from file" id="makeArticleFromFileUploadButton" />
         </form>
       </div>
         <div id="loadingSpinnerDiv" class="loadingSpinnerDiv"><img id="loadingSpinnerImg" src="https://cdn.glitch.com/1dfaea6a-e65e-49f4-8703-f550387a91b6%2Floading_spinner.gif?1493145152988" ></div>
