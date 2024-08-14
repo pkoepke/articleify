@@ -8,15 +8,17 @@
   },
   "dependencies": {
     "express": "*",
-    "sqlite": "*",
+    "sqlite3": "*",
     "sequelize": "*",
-    "body-parser": "*"
+    "body-parser": "*",
+    "cheerio":"*",
+    "pdftohtmljs":"*"
   },
   "engines": {
-    "node": "6.10.x"
+    "node": ">6.10.x"
   },
   "repository": {
-    "url": "https://glitch.com/edit/#!/welcome-project"
+    "url": "https://github.com/pkoepke/articleify"
   },
   "license": "none",
   "keywords": [
